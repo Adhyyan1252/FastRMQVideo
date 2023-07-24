@@ -30,7 +30,7 @@ class Introduction(Scene):
         return MathTex(*args, font_size=DEFAULT_FONT_SIZE * 0.8).next_to(
             self.array1, DOWN * 2.5
         )
-        
+
     def do_example(self, i, j):
         t0 = self.l(f"m({i}, {j}) =")
         self.play(FadeIn(t0))
@@ -75,17 +75,14 @@ class Introduction(Scene):
         self.add(title)
         self.play(Create(self.array1))
 
-        t1 = self.l(
-            f"m(L, R) =", r"\text{min of index }", f"L", r"\text{ to }", f"R"
-        )
+        t1 = self.l(f"m(L, R) =", r"\text{min of index }", f"L", r"\text{ to }", f"R")
         self.play(Write(t1))
         self.wait(1)
         self.play(FadeOut(t1))
-        
-        
+
         self.do_example(3, 5)
         self.do_example(0, 4)
-        
+
         trivial = self.l(r"\text{Trivial Solution: } \mathcal{O}(N) \text{ per query}")
         self.play(Create(trivial))
         self.wait(0.5)
@@ -167,7 +164,7 @@ class NSquared(Scene):
             self.grid.animate.shift(LEFT * 3),
             *(x.animate.shift(LEFT * 3) for x in t1[N:]),
         )
-        font_size =  DEFAULT_FONT_SIZE
+        font_size = DEFAULT_FONT_SIZE
         pre_mem = MathTex(
             r"\text{Preprocessing: }", r"\mathcal{O}(N^2)", font_size=font_size
         ).shift(UP + RIGHT * 3)
@@ -193,10 +190,12 @@ class Fast(Scene):
     def construct(self):
         # self.nums = [random.randint(1, 9) for i in range(N)]
         self.nums = [6, 3, 1, 6, 2, 8, 5, 7, 9, 6, 7, 8, 9, 4, 7, 3]
-        self.a1()
+        self.a3()
 
     def a1(self):
-        self.array = create_array(map(str, self.nums), show_index=True, sz=sz).shift(UP * 2)
+        self.array = create_array(map(str, self.nums), show_index=True, sz=sz).shift(
+            UP * 2
+        )
 
         self.add(self.array)
         self.a = create_array([""] * N, sz=sz).next_to(self.array, DOWN)
@@ -233,9 +232,7 @@ class Fast(Scene):
         self.play(Transform(self.ex1, self.ex2))
         anims = []
         for k in range(3, 15):
-            anims.append(
-                self.array[k].animate.set_color(WHITE)
-            )
+            anims.append(self.array[k].animate.set_color(WHITE))
         self.play(AnimationGroup(*anims, run_time=1.5), FadeOut(self.ex1))
         self.wait(0.5)
         self.play(FadeIn(self.a), FadeIn(self.a_label))
@@ -249,7 +246,7 @@ class Fast(Scene):
             for l in range(k, N // 2):
                 anims.append(self.array[l].animate.set_color(left_col))
             formula = MathTex(
-                f"A[",
+                f"A_1[",
                 f"{k}",
                 f"]= m(",
                 f"{k}",
@@ -275,7 +272,7 @@ class Fast(Scene):
             anims.append(FadeOut(formula))
             self.play(AnimationGroup(*anims, run_time=0.2))
             self.wait(0.5)
-            
+
         anims = []
         for l in range(k, N // 2):
             anims.append(self.array[l].animate.set_color(WHITE))
@@ -289,7 +286,7 @@ class Fast(Scene):
                 anims.append(self.array[l].animate.set_color(right_col))
 
             formula = MathTex(
-                f"A[",
+                f"A_1[",
                 f"{k}",
                 f"]= m(",
                 f"{N//2}",
@@ -317,7 +314,7 @@ class Fast(Scene):
             anims.append(FadeOut(formula))
             self.play(AnimationGroup(*anims, run_time=0.2))
             self.wait(0.5)
-            
+
         anims = []
         for l in range(N // 2, k + 1):
             anims.append(self.array[l].animate.set_color(WHITE))
@@ -332,9 +329,9 @@ class Fast(Scene):
         ).move_to(self.q1)
         self.q2[3].set_color(left_col)
         self.q2[5].set_color(right_col)
-        self.q3 = MathTex("m(3, 14)", "=", "min(", "A[3]", ",", "A[14]", ")").move_to(
-            self.q1
-        )
+        self.q3 = MathTex(
+            "m(3, 14)", "=", "min(", "A_1[3]", ",", "A_1[14]", ")"
+        ).move_to(self.q1)
         self.q3[3].set_color(left_col)
         self.q3[5].set_color(right_col)
 
@@ -383,7 +380,7 @@ class Fast(Scene):
         self.q2[3].set_color(right_col)
         self.q2[9].set_color(right_col)
         self.q3 = MathTex(
-            "m(", "L", ",", "R", ")", "=", "min(", "A[L]", ",", "A[R]", ")"
+            "m(", "L", ",", "R", ")", "=", "min(", "A_1[L]", ",", "A_1[R]", ")"
         ).move_to(self.q1)
         self.q3[1].set_color(left_col)
         self.q3[7].set_color(left_col)
@@ -403,7 +400,9 @@ class Fast(Scene):
         )
 
     def a2(self):
-        self.a = create_array([""] * N, sz=sz).next_to(self.array, DOWN)
+        self.array = create_array(map(str, self.nums), show_index=True, sz=sz).shift(
+            UP * 2
+        )
 
         def get_x_between(l):
             return (
@@ -412,19 +411,15 @@ class Fast(Scene):
 
         dashed_line_x = [get_x_between(N // 4 - 1), get_x_between(3 * (N // 4) - 1)]
         solid_line_x = [0]
-        dashed_lines = []
-        solid_lines = []
+        self.add(self.array)
+
+        self.a = create_array([""] * N, sz=sz).next_to(self.array, DOWN)
+        self.a_label = MathTex("A_2").next_to(self.a, LEFT)
 
         top = UP * 2 * sz
         bottom = DOWN * sz
-        for x in dashed_line_x:
-            dashed_lines.append(
-                DashedLine(
-                    self.array.get_center() + top + RIGHT * x,
-                    self.a.get_center() + bottom + RIGHT * x,
-                    color=c_col,
-                )
-            )
+
+        solid_lines = []
         for x in solid_line_x:
             solid_lines.append(
                 Line(
@@ -433,9 +428,22 @@ class Fast(Scene):
                     color=c_col,
                 )
             )
+        self.play(Create(*solid_lines))
+        self.wait(0.5)
 
-        self.add(*dashed_lines, *solid_lines)
-        self.add(self.a)
+        dashed_lines = []
+        for x in dashed_line_x:
+            dashed_lines.append(
+                DashedLine(
+                    self.array.get_center() + top + RIGHT * x,
+                    self.a.get_center() + bottom + RIGHT * x,
+                    color=c_col,
+                )
+            )
+
+        self.play(FadeIn(*dashed_lines))
+        self.wait(0.5)
+        self.play(FadeIn(self.a, self.a_label))
 
         self.a_txts = [None] * N
 
@@ -497,23 +505,41 @@ class Fast(Scene):
             anims = []
             anims.append(self.a[k].animate.set_color(WHITE))
             anims.append(self.a_txts[k].animate.set_color(WHITE))
-            for l in range(ll, rr + 1):
-                anims.append(self.array[l].animate.set_color(WHITE))
+            # for l in range(ll, rr + 1):
+            #     anims.append(self.array[l].animate.set_color(WHITE))
             anims.append(FadeOut(formula))
             self.play(AnimationGroup(*anims, run_time=0.2))
             self.wait(0.5)
 
+        lols = []    
         for k in range(N // 4 - 1, -1, -1):
             color_range(k, N // 4 - 1, left_col, going_right=False)
+        for k in range(N // 4 - 1, -1, -1):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []
         for k in range(N // 4, N // 2):
             color_range(k, N // 4, right_col, going_right=True)
+        for k in range(N // 4, N // 2):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+
+        lols = []
         for k in range(3 * (N // 4) - 1, N // 2 - 1, -1):
             color_range(k, 3 * (N // 4) - 1, left_col, going_right=False)
+        for k in range(3 * (N // 4) - 1, N // 2 - 1, -1):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []
         for k in range(3 * (N // 4), N):
             color_range(k, 3 * (N // 4), right_col, going_right=True)
+        for k in range(3 * (N // 4), N):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
+
 
         def show_example(i, j, c):
             self.q1 = MathTex(f"m({i}, {j})").shift(DOWN * 2)
@@ -550,9 +576,14 @@ class Fast(Scene):
             indi = lambda x: Wiggle(x, scale_value=1.5)
             self.play(indi(self.a[i]), indi(self.a_txts[i]))
             self.play(indi(self.a[j]), indi(self.a_txts[j]))
-            # self.play(indi(self.a[i]))
-            # self.play(indi(self.a[j]))
-
+            
+            self.q4 = MathTex(
+                f"m({i}, {j})", "=", "min(", f"{min(self.nums[i: c])}", ",", f"{min(self.nums[c:j+1])}", ") = ", f"{min(self.nums[i:j+1])}"
+            ).move_to(self.q1)
+            self.q4[3].set_color(left_col)
+            self.q4[5].set_color(right_col)
+            self.play(Transform(self.q1, self.q4))
+            
             anims = []
             anims.append(FadeOut(self.q1))
             anims.append(self.a[i].animate.set_color(WHITE))
@@ -563,10 +594,14 @@ class Fast(Scene):
                 anims.append(self.array[k].animate.set_color(WHITE))
             self.play(AnimationGroup(*anims, run_time=0.7))
 
-        show_example(1, 6, N // 4)
+        # show_example(1, 6, N // 4)
         show_example(8, 13, 3 * (N // 4))
 
     def a3(self):
+        self.array = create_array(map(str, self.nums), show_index=True, sz=sz).shift(
+            UP * 2
+        )
+        self.add(self.array)
         self.a = create_array([""] * N, sz=sz).next_to(self.array, DOWN)
 
         def get_x_between(l):
@@ -581,14 +616,6 @@ class Fast(Scene):
 
         top = UP * 2 * sz
         bottom = DOWN * sz
-        for x in dashed_line_x:
-            dashed_lines.append(
-                DashedLine(
-                    self.array.get_center() + top + RIGHT * x,
-                    self.a.get_center() + bottom + RIGHT * x,
-                    color=c_col,
-                )
-            )
         for x in solid_line_x:
             solid_lines.append(
                 Line(
@@ -597,10 +624,23 @@ class Fast(Scene):
                     color=c_col,
                 )
             )
+        self.play(*map(Create, solid_lines))
+        self.wait(0.5)
+        for x in dashed_line_x:
+            dashed_lines.append(
+                DashedLine(
+                    self.array.get_center() + top + RIGHT * x,
+                    self.a.get_center() + bottom + RIGHT * x,
+                    color=c_col,
+                )
+            )
 
-        self.add(*dashed_lines, *solid_lines)
-        self.add(self.a)
-
+        self.play(*map(Create, dashed_lines))
+        self.wait(0.5)
+        self.a_label = MathTex("A_3").next_to(self.a, LEFT)
+        self.play(FadeIn(self.a_label, self.a))
+        self.wait(0.5)
+        
         self.a_txts = [None] * N
 
         def color_range(k, mid, col, going_right):
@@ -661,38 +701,71 @@ class Fast(Scene):
             anims = []
             anims.append(self.a[k].animate.set_color(WHITE))
             anims.append(self.a_txts[k].animate.set_color(WHITE))
-            for l in range(ll, rr + 1):
-                anims.append(self.array[l].animate.set_color(WHITE))
+            # for l in range(ll, rr + 1):
+            #     anims.append(self.array[l].animate.set_color(WHITE))
             anims.append(FadeOut(formula))
             self.play(AnimationGroup(*anims, run_time=0.2))
             self.wait(0.5)
 
+        lols = []
         for k in range(1, -1, -1):
             color_range(k, 1, left_col, going_right=False)
+        for k in range(1, -1, -1):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []
         for k in range(2, 4):
             color_range(k, 2, right_col, going_right=True)
-
+        for k in range(2, 4):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
+            
+        lols = []
         for k in range(5, 3, -1):
             color_range(k, 5, left_col, going_right=False)
+        for k in range(5, 3, -1):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []
         for k in range(6, 8):
             color_range(k, 6, right_col, going_right=True)
+        for k in range(6, 8):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []
         for k in range(9, 7, -1):
             color_range(k, 9, left_col, going_right=False)
+        for k in range(9, 7, -1):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []
         for k in range(10, 12):
             color_range(k, 10, right_col, going_right=True)
+        for k in range(10, 12):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
 
+        lols = []        
         for k in range(13, 11, -1):
             color_range(k, 13, left_col, going_right=False)
-
+        for k in range(13, 11, -1):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
+        
+        lols = []
         for k in range(14, 16):
             color_range(k, 14, right_col, going_right=True)
+        for k in range(14, 16):
+            lols.append(self.array[k].animate.set_color(WHITE))
+        self.play(AnimationGroup(*lols, run_time=0.2))
+            
 
         def show_example(i, j, c):
-            self.q1 = MathTex(f"m({i}, {j})").shift(DOWN * 2)
+            self.q1 = MathTex(f"m({i}, {j})").shift(DOWN)
             self.q2 = MathTex(
                 f"m({i}, {j})", "=", "min(", f"m({i}, {c-1})", ",", f"m({c}, {j})", ")"
             ).move_to(self.q1)
@@ -738,7 +811,7 @@ class Fast(Scene):
             self.play(AnimationGroup(*anims, run_time=0.7))
 
         show_example(5, 7, 6)
-        show_example(12, 15, 14)
+        # show_example(12, 15, 14)
 
 
 class All(Scene):
@@ -768,9 +841,9 @@ class All(Scene):
         return arrow
 
     def construct(self):
-        self.nums = [random.randint(1, 9) for i in range(N)]
+        self.nums = [6, 3, 1, 6, 2, 8, 5, 7, 9, 6, 7, 8, 9, 4, 7, 3]
         self.array = create_array(map(str, self.nums), show_index=True, sz=sz).shift(
-            UP * 2.5
+            UP * 3
         )
         self.a = [None] * 4
         self.a[1] = create_array([""] * N, sz=sz, color=GREY).next_to(
@@ -790,17 +863,17 @@ class All(Scene):
         self.a_txt[3] = MathTex("A_3").next_to(self.a[3], LEFT)
 
         self.add(self.array)
-        self.add(*self.a[1:])
-        self.add(*self.a_txt[1:])
-
-        level1 = [self.get_arrow(1, 7, 0), self.get_arrow(1, 8, 15)]
-        level2 = [
+        # self.add(*self.a[1:])
+        # self.add(*self.a_txt[1:])
+        level = [None] * 4
+        level[1] = [self.get_arrow(1, 7, 0), self.get_arrow(1, 8, 15)]
+        level[2] = [
             self.get_arrow(2, 3, 0),
             self.get_arrow(2, 4, 7),
             self.get_arrow(2, 11, 8),
             self.get_arrow(2, 12, 15),
         ]
-        level3 = [
+        level[3] = [
             self.get_arrow(3, 1, 0),
             self.get_arrow(3, 2, 3),
             self.get_arrow(3, 5, 4),
@@ -810,7 +883,11 @@ class All(Scene):
             self.get_arrow(3, 13, 12),
             self.get_arrow(3, 14, 15),
         ]
-        self.add(*level1, *level2, *level3)
+        # self.add(*level1, *level2, *level3)
+        
+        for i in [1, 2, 3]:
+            self.play(FadeIn(self.a_txt[i], self.a[i], *level[i]))
+            self.wait(1)
 
         LOGN = 4
 
@@ -998,16 +1075,19 @@ class All(Scene):
         self.wait(0.5)
         self.play(FadeOut(i_txt, xor_out))
 
-        formula_txt = MathTex(r"\text{leftmost 1 bit of } XOR(l, r)").next_to(
+        formula_txt = MathTex(r"k = \text{ leftmost 1 bit of } XOR(l, r)").next_to(
             self.a[3], DOWN * 3
         )
+        formula2_txt = MathTex(r"m(L, R) = min(A_k[L], A_k[R])").next_to(formula_txt, DOWN)
         self.play(Write(formula_txt))
         self.wait(1)
-        self.play(FadeOut(formula_txt))
+        self.play(Write(formula2_txt))
+        self.wait(1)
+        self.play(FadeOut(formula_txt, formula2_txt))
 
         # COMPLEXITY ANALYSIS
-        right_txt = MathTex("\log_2(N)", font_size=DEFAULT_FONT_SIZE * 0.5).next_to(
-            self.a[2], RIGHT
+        right_txt = MathTex("\log_2(N)-1", font_size=DEFAULT_FONT_SIZE * 0.4).next_to(
+            self.a[2], RIGHT, buff=0.08
         )
         up_arrow = Arrow(
             right_txt.get_center(),
