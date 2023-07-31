@@ -1,0 +1,88 @@
+
+Script for RMQ video
+
+
+INTRO
+
+In this video we’ll figure out how to solve the range minimum query problem really really fast. It appears in many other problems like finding the lowest common ancestor in a tree, or finding the longest prefix in a string. In fact the data-structure we will come up with can be modified to solve many problems not related to finding the minimum.  The RMQ problem is straightforward. There’s an array of size N and we get many queries on this array. Each query is asking us to find the minimum value between the L th and the R th element.   For instance M 3 comma 5 is equal to the min of 8 1 and 5 that is 1. M 0 4 is the min of 7 4 5 8 1 which is also 1.   The straightforward solution to this problem is to answer every query by iterating from the L th element to the R th. Although this would be really slow and take upto O(N) time per query
+
+
+N SQUARED SOL
+
+Let’s see how we can use preprocessing to make our queries faster. Preprocessing is when we analyze our array at the start of the program and then use it to answer future queries. 
+
+During preprocessing, we compute the answers to all possible queries and store it in a table. In the first row of the table, we’ll store the answers to queries which start at the 0th index as shown. To compute this we start at the 0th index and maintain the minimum as we iterate until the end of the array while storing the current minimum at every step. We would do this for every starting index. 
+
+Once we have the table, we can answer any query in O(1) time by just looking at the table. However,  we have shifted all the hardwork to preprocessing and as result the memory and time required for preprocessing is order n squared. This quickly becomes infeasible for larger arrays. 
+
+Using the power of divide and conquer, we will discover how we can keep constant time queries while having much faster preprocessing time and a smaller memory footprint. 
+
+
+FAST SOLUTION
+
+Let’s look at the query from 3 to 14. This is a pretty long range, covering almost the entire array. We can break this range from the middle into 2 smaller ranges. From 3 to 7 and 8 to 14. 
+
+If we find the answers to both the pieces individually then we can find the answer for the query by taking the min of both of them. 
+
+In fact, this will work for any query given that it crosses the center point.
+
+But what’s the point of breaking it into 2 ranges? If we store the min of all ranges starting from or ending at the center point then we can easily find the answer to the subqueries. We can do this in the preprocessing step and store it in an array called A1.  Let’s see it for the left half. To start, the 7th index value will be identical to the input array. For the one to its left, we will store the min of 6th and 7th element. At the 5th index we’ll store the min of all elements till the dashed line which is 8 5 and 7. Keep doing this for all elements until we reach the start of the array.   Repeat the same for the right half, but now we’ll move in the other direction. Start by letting the 8th index be the same value as the input. The 9th element will be the min of 8th and 9th element and so.   After this our A_1 array is finished. The ith element in this array contains the min from index i to the dashed line. 
+Going back to the m 3 14 query but this time we’ll use A_1 to calculate the answer. Notice how we already have saved the answer to the left range when we were computing the left half of A1. Same for the right half. Combining both the subqueries by taking the min allows us to calculate this in constant time.   More generally, if our query crosses the center point then we can use A_1 to answer with this formula in constant time. 
+
+—————————
+
+that’s great. We can now solve queries in constant time. But this only works if our query crosses the center point. What if L and R are both in the first half of the array. We can’t use A1 anymore since that contains the ranges originating from center point. 
+
+This is where divide and conquer will help us out.  We know that our query either completely lies in the first half, or it completely lies in the second half. Let’s draw a solid yellow line to indicate the 2 partitions created.   Now we will repeat the same approach but this time it will be through the mid points of each partition. A2 will hold the values from the dashed line to i within its own partition.   Let’s see it happen for the left partition. 
+
+Now the same for the right partition.  
+——————
+ Using A2 we’ll answer the query from 1 to 6. The range doesn’t cross the center point so we can’t use A1, but we can use A2. We break it through the mid point of the partition which is the first dashed line. A2 already stores the answers of the both the ranges and this allows us to calculate it the answer in constant time.  Another example but this time the query lies completely in the second partition. 
+
+————— 
+ That’s great we can now use A1 to solve any query which goes through the midpoint of the whole array, and we can use A2 to solve any query which cross the midpoints in the partitions. But we aren’t done yet. What if the query doesn’t cross any of the lines. This is where we’ll use divide and conquer to split each partition again  into 2 pieces giving us a total of 4 pieces. Then we repeat this approach and store it in A3.
+
+
+————
+Right now each partition has 4 elements. If we split again, we’ll get a partition size of 2. At that point the A4 value will be the same as the input array so there is no point to divide further.
+
+
+Let’s bring A1 A2 and A3 into the same screen to figure out how we can use these to answer any query.  
+The arrows makes it easier to visualize what value is stored in each of the A arrays.
+
+The last piece of the puzzle is to find which array to compute the final answer. The straightforward approach is to start from A1 and if it isn’t valid then move on to the next one. This would be too slow as there are a logarithmic number of levels. 
+
+—————
+
+The trick is to look at indexes from 0 to 15 in binary. Intuitively, the number of partitions we have is always a power of 2. Whenever we split, it doubles the number of partitions and each partition is now half the size. The binary values of the indexes follow along neatly with this pattern.
+
+The first thing we notice is that all the red boxes start with a 0 and all the blue boxes start with a 1. This implies that to use A1, L has start with a 0 and R has to start with a 1. 
+
+Looking at the left partition of level 2, we see that the first bit is the same. The second bit is 0 for the left half, and 1 for the right half. This implies that for A2 to be valid, the first bit of L and R must be the same, and the second bit must be different.   Looking at a partition of level 3 we observe a similar pattern. The first 2 bits are the same, and the third bit differs between the left and right half.  Let’s take an example of 5 and 11. 5 and 11 differ in the leftmost bit so we know that we must use A1. We can verify that this is correct since 5 and 11 cross the middle point of the array.   For 9 and 13, the first bit is the same so we can’t use A1. The second bit differs and hence we can use A2.
+
+
+For 5 and 7 the first 2 bits are the same so we can’t use A1 or A2. The third bit differs. This means that we must use A3. 
+
+ 
+————
+
+If we take the bitwise XOR of 5 and 7 something magical happens. The bitwise xor is an operation on the bits of the same columns.  If the bits are the same, then the output bit is a 0. If the bits differ, then the output bit is a 1. So taking the XOR of 5 and 7 makes the first 2 bits a 0 and makes the third bit a 1.  
+
+the position of the leftmost 1 bit of the resulting XOR will tell us which level to use. We can compute this in constant time since XOR and leftmost 1 bit are both constant time operations. In c++ you can use special builtin functions to get the leftmost 1 bit. Otherwise you could preprocess this for every XOR output possible.   Once we find the correct level, we can simply use that array to compute the final answer. 
+ The trick with XOR only works if N is a power of 2. If it’s not, then the bits won’t line up with the partitions. 
+
+Fortunately, if N is not a power of 2, then we can add null elements to the end until it becomes a power of 2. In the worst case our array size doubles but this won’t change the time complexity since it’s a constant factor. 
+
+——————
+
+
+ During preprocessing, In every iteration of the divide and conquer we split our partitions into 2 until the partition size becomes 4. That means there are log(n) - 1 levels. Every level stores N elements. That gives our preprocessing memory to be O(NLogn) which is much better than the quadratic memory we were using in the previous solution. Computing this also takes n log n time since every value in the array can be comp  uted looking at the input array and its previous element. 
+
+
+The query time is O(1) since we need to find the level and then take the min of 2 elements. 
+
+—————
+
+Some concluding notes to finish off the video.  Throughout the video we didn’t use any special property of min. The only property we assumed is that we can compute the min in any order. This data structure would work with any other associate operator such as addition, matrix multiplication and convolution.    In terms of performance Nlogn is not the best. We can do even better if we make blocks of size K and recursively apply this data structure to the sub-blocks. The resulting data-structure would have nlog*n preprocessing time. It’s a bit more complex to explain so I am gonna leave this topic for a future video. 
+
+Lastly, this data-structure is not common and I discovered it while solving a problem. I’ve seen this been casually referred to as the disjoint-sparse-table. If you have a better names for it, please leave a comment.  Thank you for sticking to the end and I hope you learnt a bit more about data-structures today.    
